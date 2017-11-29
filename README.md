@@ -330,9 +330,13 @@ https://github.com/mami-project/lurk, this time just copy-paste the file.
 `sh dummyClient.sh $proxyCert $caCert $CSR $file ` 
 //Cert refers to the proxy's certificate and csr is the textfile containing csr,lifetime and validty as seen in step 6. 
 //File refers to a destination file for the certificate, **if it does exist it will rewrite it**.
-Don't forget to add "@" before the file's name. After executing it the cert should prompt.
+Don't forget to add "@" before the file's name. After executing it the cert should prompt. 
 
-15. Renewal: To terminate an auto renewal from DNO: #go run termination.go $uuid --> TO DO, improve the message.
+:tada::tada::tada::tada::tada::tada::tada::tada::tada::tada::tada::tada::tada::tada:
+
+15. Renewal: To terminate an auto renewal from DNO: 
+`#go run termination.go $uuid `
+This $uuid is kept under the "starCerts/certificateNX/renewal_uri"
 
 
 ## ROUND-TRIPS GUIDE
