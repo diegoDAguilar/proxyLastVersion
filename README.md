@@ -329,7 +329,7 @@ https://github.com/mami-project/lurk, this time just copy-paste the file.
 14. Execute the client: 
 `sh dummyClient.sh $proxyCert $caCert $CSR $file ` 
 //Cert refers to the proxy's certificate and csr is the textfile containing csr,lifetime and validty as seen in step 6. 
-//File refers to a destination file for the certificate, *if it does exist it will rewrite it*.
+//File refers to a destination file for the certificate, **if it does exist it will rewrite it**.
 Don't forget to add "@" before the file's name. After executing it the cert should prompt.
 
 15. Renewal: To terminate an auto renewal from DNO: #go run termination.go $uuid --> TO DO, improve the message.
