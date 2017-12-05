@@ -5,7 +5,7 @@
 
 `curl --cacert $proxyCert -H Content-Type: application/json -X POST -d $fullCsr https://certProxy:443/star/registration`
 
-@proxyCert: certificate signed by 'certProxy', that is the name assigned in /etc/hosts to proxy's IP.
+@proxyCert: certificate signed by 'certProxy', that is the name assigned in /etc/hosts to proxy's IP.   
 @fullCsr contains: {"csr":".........", "lifetime":365, "validity":24}
 
 ### 2. DNO proxy's listens to the request
