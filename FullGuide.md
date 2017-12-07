@@ -1,6 +1,4 @@
-## Boulder-----Server VM-----DNO Proxy-----Client
-
-
+Note: This is a high-level guide, for installation go to the README
 ## 1. Short-term certificate issuance 
 
 **_ Steps 3 and 4 occur at the same time but one is from Client's point of view and the other from Boulder's _**
@@ -93,6 +91,28 @@ Date: Thu, 23 Nov 2017 18:30:14 GMT
 
 Because the coroutine always serves this *cert file*, renewal will consist on updating this file.
 
-### 2. A
+### 2. RenewalManager 
+
+Boulder aside, renewalManager is the process that really does the renewals. 
+When a new STAR cert is created renewalManager adds a cronjob. This cronjob executes every 2h. When executing it checks if STAR lifetime 
+has expired, if it has it kills itself and deletes the *cert file*. Else, checks if current cert's validity is less than half of the
+validity and renews it if so. 
+
+Renewal is made using a CA that replicates ACME using the csr and validity stored. Then the full chain replaces *cert file*.
 
 ## 3. Termination 
+
+### 1. DNO wants to terminate 'x' renewal.
+DNO keeps every tuple {csr, renewal-uri, validity} it has issued so it has the *renewal-uri* of every STAR cert.
+
+`go run termination.go 09096ffd-5429-4a50-a80c-4fbe45a482b5`
+
+This command stops renewals for *renewal-uri* : 0909...
+In order to do so, DNO requests a nonce to the Server and sends a JWT when it receives it.
+
+### 2.RenewalManager receives termination request
+
+Renewal manager deletes the cronjob + *cert file* but still serves at *renewal-uri* as it was pointed in **2.Renewal in TO DO?**. New 
+client requests to *renewal-uri* will return `Order status: canceled`. 
+RenewalManager is listening at :9200 /getNonce and :9200 /terminate and uses its own cert for TLS.
+
