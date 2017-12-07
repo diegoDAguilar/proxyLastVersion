@@ -1,7 +1,9 @@
 ## Boulder-----Server VM-----DNO Proxy-----Client
 
-## Steps 3 and 4 occur at the same time but one is from Client's point of view and the other from Boulder's
-## 1. Client asks for certificate 
+
+## 1. Short-term certificate issuance 
+
+**_ Steps 3 and 4 occur at the same time but one is from Client's point of view and the other from Boulder's _**
 ### 1. Client uses curl to ask for a certificate to the proxy.
 
 `curl --cacert $proxyCert -H Content-Type: application/json -X POST -d $fullCsr https://certProxy:443/star/registration`
@@ -51,7 +53,7 @@ Last field contains the URI(Located in the server) from where certificate is rea
 A GET to that URI will return the certificate and show it in screen plus storage it in the directory passed as argument with the desired
 name. If a certificate with the same properties exists in that file it will replace it, as that is the nature of STAR.
 
-### 4 Boulder receives the certificate request with the extra fields 
+### 4. Boulder receives the certificate request with the extra fields 
 
 When Boulder's Web Front End *WFE* receives a new valid request with recurrent:true it executes STAR.
 Relevant information is storaged. These info includes the *csr*, *validity* and the *renewal uri*(which has just been randomly assigned
@@ -62,9 +64,35 @@ lifetime.
 These certificate is storaged together with the relevant info from the request and send back to the DNO.
 At the same time the cert is made available at renewal uri. 
 
-### 5 DNO receives cert and GETs the renewal uri 
+### 5. DNO receives cert and GETs the renewal uri 
 
 DNO receives the certificate but the renewal uri remains unknown to him.
 It get's that first certificate UUID and makes a GET to server's port :9898 that will return him the real renewal-uri.
 This uri is send back to the Client in step 3.2 and also storaged in the proxy.
 
+## 2. Renewal
+
+### 1. Server creates a new STAR cert
+
+When star cert is created, a coroutine starts serving a *cert file* at the *renewal uri*, this serving stays still until the ends of
+times(TO DO stop serving at *renewal uri* after a while when termination is requested?).
+
+When a petition is received it serves the *cert file* that contains the cert chain in pem format. It also sends 2 new headers: *Not-After* and *Not-Before* on top of the default ones:
+
+```
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Content-Length: 3248
+Content-Type: text/plain; charset=utf-8
+Last-Modified: Thu, 23 Nov 2017 18:30:09 GMT
+Not-After: Nov 23 17:30:00 2017 GMT
+Not-Before: Nov 24 16:30:00 2017 GMT
+Date: Thu, 23 Nov 2017 18:30:14 GMT
+
+```
+
+Because the coroutine always serves this *cert file*, renewal will consist on updating this file.
+
+### 2. A
+
+## 3. Termination 
